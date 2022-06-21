@@ -218,5 +218,5 @@ module.exports = async () => {
         await getPreSbobet()
         await getPre1XBET()
         console.log("refesh")
-    }, 1000 * 60, 30)
+    }, 1000 * 60, 15)
 };
