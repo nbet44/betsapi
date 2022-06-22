@@ -216,7 +216,6 @@ module.exports = async () => {
     setInterval(async function () {
         await getPreBET365()
         await getPreSbobet()
-        await getPre1XBET()
         console.log("refesh")
     }, 1000 * 60, 15)
 };

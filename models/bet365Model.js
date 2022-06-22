@@ -21,58 +21,27 @@ const bet356PrematchModel = () => {
     return mongoose.model("tbl_bet365_preEvent", modelSchema)
 }
 
-const bwinInPlayModel = () => {
+const bet356InplayModel = () => {
     var modelSchema = new Schema({
-        Id: { type: String, required: true },
+        FI: { type: String, required: true },
+        EventId: { type: String, required: true },
+        OurId: { type: String, required: true },
         SportId: { type: Number },
         SportName: { type: String },
-        RegionId: { type: Number },
-        RegionName: { type: String },
-        LeagueId: { type: Number },
-        LeagueName: { type: String },
         HomeTeam: { type: String },
         AwayTeam: { type: String },
-        BetRadarId: { type: Number },
         IsPreMatch: { type: Boolean },
-        Date: { type: Date },
-        Scoreboard: { type: Object },
-        type: { type: String },
-        clickCount: { type: Number, default: 1 },
-        playCount: { type: Number, default: 1 },
+        asian_lines: { type: Object },
+        goals: { type: Object },
+        half: { type: Object },
+        main: { type: Object },
+        schedule: { type: Object },
         updated_at: { type: Number }
     });
-    return mongoose.model("tbl_bwin_inplay", modelSchema)
-}
-
-const bwinEventModel = () => {
-    var modelSchema = new Schema({
-        AwayTeam: { type: String },
-        AwayTeamId: { type: String },
-        AwayTeamShort: { type: String },
-        BetRadarId: { type: String },
-        HomeTeam: { type: String },
-        HomeTeamId: { type: String },
-        HomeTeamShort: { type: String },
-        Id: { type: String },
-        IsPreMatch: { type: Boolean },
-        LeagueId: { type: String },
-        LeagueName: { type: String },
-        Markets: { type: Object },
-        RegionId: { type: String },
-        RegionName: { type: String },
-        Scoreboard: { type: Object },
-        SportId: { type: String },
-        SportName: { type: String },
-        optionMarkets: { type: Object },
-        our_event_id: { type: String },
-        updated_at: { type: String },
-        Date: { type: Date },
-        favor: { type: Boolean },
-        created: { type: Date, default: Date.now }
-    });
-    return mongoose.model("tbl_bwin_event", modelSchema)
+    return mongoose.model("tbl_bet365_inplayEvent", modelSchema)
 }
 
 module.exports = {
     bet356PrematchModel: bet356PrematchModel(),
+    bet356InplayModel: bet356InplayModel()
 };
