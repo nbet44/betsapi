@@ -15,7 +15,7 @@ module.exports = async () => {
         };
         try {
             const response = await axios(request);
-            if (response.data.success == 1) {
+            if (response.data.success == 1 && Object.keys(response.data.results.odds).length > 0) {
                 let data = response.data.results
                 let sdata = {
                     bet365_id: param.bet365_id,
@@ -238,9 +238,12 @@ module.exports = async () => {
     }
     //1XBET end
 
+    await getPreBET365()
+    setInterval(async function () {
+        await getInplayBET365()
+    }, 1000 * 60, 5)
+
     setInterval(async function () {
         await getPreBET365()
-        await getInplayBET365()
-        console.log("refesh")
-    }, 1000 * 60, 1)
+    }, 1000 * 60, 15)
 };
