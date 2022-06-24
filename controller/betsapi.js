@@ -1,6 +1,6 @@
 const { default: axios } = require("axios");
 const moment = require('moment');
-const { sbobetPrematchModel } = require("../models/sbobetModel");
+const { sbobetPrematchModel, sbobetInplayModel } = require("../models/sbobetModel");
 const { bet356PrematchModel, bet356InplayModel } = require("../models/bet365Model");
 const { lxbetPrematchModel } = require("../models/lxbetModel");
 const baseController = require("./baseController");
@@ -105,7 +105,7 @@ module.exports = async () => {
     //BET365 end
 
     //SBOBET start
-    const prematchOddSbobet = async (param) => {
+    const eventSbobet = async (param, IsPreMatch) => {
         const request = {
             method: "get",
             url: "https://api.b365api.com/v1/sbobet/event?token=" + token + "&event_id=" + param.id,
@@ -121,11 +121,15 @@ module.exports = async () => {
                     SportName: "Soccer",
                     HomeTeam: param.home.name,
                     AwayTeam: param.away.name,
-                    IsPreMatch: true,
                     markets: data.markets,
-                    updated_at: data.updated_at
+                    updated_at: data.updated_at,
+                    IsPreMatch,
                 }
-                await baseController.BfindOneAndUpdate(sbobetPrematchModel, { Id: sdata.Id }, sdata)
+                if (IsPreMatch) {
+                    await baseController.BfindOneAndUpdate(sbobetPrematchModel, { Id: sdata.Id }, sdata)
+                } else {
+                    await baseController.BfindOneAndUpdate(sbobetInplayModel, { Id: sdata.Id }, sdata)
+                }
             }
         } catch (e) {
             console.log('Getting SBOBET pre-event odds', e.message)
@@ -142,7 +146,7 @@ module.exports = async () => {
             if (response.data.success === 1) {
                 let funcs = []
                 for (let i in response.data.results) {
-                    funcs.push(prematchOddSbobet(response.data.results[i]))
+                    funcs.push(eventSbobet(response.data.results[i], true))
                 }
                 Promise.all(funcs)
             }
@@ -164,6 +168,26 @@ module.exports = async () => {
                 for (let i = 1; i <= total; i++) {
                     await prematchSbobet([i])
                 }
+            }
+        } catch (e) {
+            console.log('Start getting prematch SBOBET', e.message)
+        }
+    }
+
+    const getInplaySbobet = async () => {
+        const request = {
+            method: "get",
+            url: "https://api.b365api.com/v1/sbobet/inplay?sport_id=1&token=" + token,
+        };
+        try {
+            const response = await axios(request);
+            if (response.data.success === 1) {
+                let data = response.data.results
+                let funcs = []
+                for (let i = 1; i < data.length; i++) {
+                    funcs.push(eventSbobet(data[i], false))
+                }
+                Promise.all(funcs)
             }
         } catch (e) {
             console.log('Start getting prematch SBOBET', e.message)
@@ -238,12 +262,13 @@ module.exports = async () => {
     }
     //1XBET end
 
-    await getPreBET365()
     setInterval(async function () {
         await getInplayBET365()
+        await getInplaySbobet()
     }, 1000 * 60, 5)
 
     setInterval(async function () {
         await getPreBET365()
-    }, 1000 * 60, 15)
+        await getPreSbobet()
+    }, 1000 * 60, 30)
 };
