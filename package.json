@@ -2,9 +2,9 @@
   "name": "betsapi",
   "version": "1.0.0",
   "description": "ok",
-  "main": "index.js",
+  "main": "betsapi.js",
   "scripts": {
-    "start": "nodemon index.js",
+    "start": "nodemon betsapi.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
